@@ -12,26 +12,32 @@ program.parse(process.argv)
 
 const timerange = program.args;
 
+// Just an helper...
+const zeroise = (hour) => ("0"+hour).slice(-2) 
+
 // Check timerange format
 const processTimeRange = (totalObject, currentValue, idx) => {
   const {total, previous} = totalObject;
   try {
     if(!/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(currentValue)) throw `${currentValue} isn't a valid time`;
 
+    const brokenTime = currentValue.split(":");
+    const currentTime = `${zeroise(brokenTime[0])}:${brokenTime[1]}`;
+
     if(idx !== 0 && idx % 2 === 1) {
       const today = moment().format("YYYY-MM-DD");
       const start = moment(`${today} ${previous}`)
-      const end = moment(`${today} ${currentValue}`)
+      const end = moment(`${today} ${currentTime}`)
       const diff = end.diff(start)
 
       return Object.assign({}, totalObject, {
         total: total + diff,
-        previous: currentValue,
+        previous: currentTime,
         isClosed: true
       })
     }
       return Object.assign({}, totalObject, {
-        previous: currentValue,
+        previous: currentTime,
         isClosed: false
       })
   } catch(err) {
