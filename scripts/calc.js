@@ -7,7 +7,7 @@ momentDurationFormat(moment);
 
 program
   .option('-t, --time <hours>', 'Time in hours', '8')
-  .option('-l, --lunch <hours>', 'Lunch interval (in hours) e.g. 0.5', '1')
+  .option('-l, --lunch <hours>', 'Break time (in hours) e.g. 0.5', '1')
 
 program.parse(process.argv)
 
@@ -64,8 +64,8 @@ const processResult = (result) => {
   const departureTime = moment(`${result.today} ${result.previous}`).add(timeLeft, 'ms').format("HH[:]mm")
 
   const timeWorkedMessage = `You have worked for ${duration}.`
-  const departureMessage =  `End the day at ${departureTime}`
-  const lunchAddedMessage =  ` (considering a lunchtime of ${moment.duration(lunchInMiliseconds, 'milliseconds').humanize()})`
+  const departureMessage =  `Clock out at ${departureTime}`
+  const lunchAddedMessage =  ` (considering ${moment.duration(lunchInMiliseconds, 'milliseconds').humanize()} of break time)`
 
   if(result.isClosed || result.total > timeInMiliseconds) return `${timeWorkedMessage}${!result.isClosed ? " Go home!" : ""}`; 
   return `${result.total ? timeWorkedMessage+" " : ""}${departureMessage}${result.total ? "" : lunchAddedMessage}.`
