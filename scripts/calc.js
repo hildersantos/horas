@@ -43,6 +43,7 @@ const processTimeRange = (totalObject, currentValue, idx) => {
       })
   } catch(err) {
     console.log(err);
+    process.exit();
   }
 }
 
