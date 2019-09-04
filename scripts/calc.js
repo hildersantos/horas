@@ -60,7 +60,7 @@ const processResult = (result) => {
   const timeInMiliseconds = program.time * 60 * 60 * 1000
   const lunchInMiliseconds = program.lunch * 60 * 60 * 1000
 
-  const timeLeft = timeInMiliseconds - result.total - (result.total ? 0 : lunchInMiliseconds)
+  const timeLeft = timeInMiliseconds - result.total + (result.total ? 0 : lunchInMiliseconds)
 
   const departureTime = moment(`${result.today} ${result.previous}`).add(timeLeft, 'ms').format("HH[:]mm")
 
