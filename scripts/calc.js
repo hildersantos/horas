@@ -7,6 +7,7 @@ momentDurationFormat(moment);
 
 program
   .option('-t, --time <hours>', 'Time in hours', '8')
+  .option('-l, --lunch <hours>', 'Lunch interval (in hours) e.g. 0.5', '1')
 
 program.parse(process.argv)
 
@@ -52,17 +53,22 @@ const result = timerange.reduce(processTimeRange, {
   isClosed: false
 });
 
+
 const processResult = (result) => {
   const duration = moment.duration(result.total, 'milliseconds').format("H[h]mm[m]");
   const timeInMiliseconds = program.time * 60 * 60 * 1000
-  const timeWorkedMessage = `You have worked for ${duration}.`
-  if(!result.total) return "Invalid time range."; 
-  if(result.isClosed || result.total > timeInMiliseconds) return `${timeWorkedMessage}${!result.isClosed ? " Go home!" : ""}`; 
+  const lunchInMiliseconds = program.lunch * 60 * 60 * 1000
 
-  const timeLeft = timeInMiliseconds - result.total
+  const timeLeft = timeInMiliseconds - result.total - (result.total ? 0 : lunchInMiliseconds)
+
   const departureTime = moment(`${result.today} ${result.previous}`).add(timeLeft, 'ms').format("HH[:]mm")
 
-  return `${timeWorkedMessage} End the day at ${departureTime}.`
+  const timeWorkedMessage = `You have worked for ${duration}.`
+  const departureMessage =  `End the day at ${departureTime}`
+  const lunchAddedMessage =  ` (considering a lunchtime of ${moment.duration(lunchInMiliseconds, 'milliseconds').humanize()})`
+
+  if(result.isClosed || result.total > timeInMiliseconds) return `${timeWorkedMessage}${!result.isClosed ? " Go home!" : ""}`; 
+  return `${result.total ? timeWorkedMessage+" " : ""}${departureMessage}${result.total ? "" : lunchAddedMessage}.`
 }
 
 console.log(processResult(result));
