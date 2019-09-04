@@ -39,13 +39,13 @@ You have worked for 3h00m. Clock out at 16:00.
 It's possible to know the clock out time even without passing a lunch time.
 ```
 $ horas 09:00
-Clock out at 16:00 (considering an hour break time).
+Clock out at 18:00 (considering an hour of break time).
 ```
 
 You can even adjust the lunch time with the `-l` option:
 ```
 $ horas -l 0.5 09:00
-Clock out at 16:00 (considering 30 minutes break time).
+Clock out at 17:30 (considering 30 minutes of break time).
 ```
 
 To know how much hours you worked in a day, pass one or more time ranges.
