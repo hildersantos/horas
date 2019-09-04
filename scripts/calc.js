@@ -47,7 +47,7 @@ const result = timerange.reduce(processTimeRange, {
 });
 
 const processResult = (result) => {
-  const duration = moment.duration(result.total, 'milliseconds').format("HH[h]mm");
+  const duration = moment.duration(result.total, 'milliseconds').format("H[h]mm[m]");
   const timeInMiliseconds = program.time * 60 * 60 * 1000
   const timeWorkedMessage = `You have worked for ${duration}.`
   if(!result.total) return "Invalid time range."; 
