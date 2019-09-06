@@ -12,6 +12,7 @@
   "dependencies": {
     "commander": "^3.0.1",
     "moment": "^2.24.0",
-    "moment-duration-format": "^2.3.2"
+    "moment-duration-format": "^2.3.2",
+    "open": "^6.4.0"
   }
 }

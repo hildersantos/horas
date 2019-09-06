@@ -2,8 +2,15 @@
 const program = require('commander');
 const moment = require('moment');
 const momentDurationFormat = require('moment-duration-format');
+const Things = require('../integrations/things');
+const readline = require('readline');
 
 momentDurationFormat(moment);
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 program
   .option('-t, --time <hours>', 'Time in hours', '8')
@@ -75,3 +82,13 @@ const processResult = (result) => {
 }
 
 console.log(processResult(result));
+
+if(!result.isClosed) {
+  rl.question("Do you want to create a reminder on Things to check out? [y/N] ", (response) => {
+    /^(y|Y)$/.test(response) && Things.addEvent("Time to Clock Out!", result.today, departureTime);
+    rl.close();
+  });
+} else {
+  rl.close();
+}
+
