@@ -2,8 +2,15 @@
 const program = require('commander');
 const moment = require('moment');
 const momentDurationFormat = require('moment-duration-format');
+const Things = require('../integrations/things');
+const readline = require('readline');
 
 momentDurationFormat(moment);
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 program
   .option('-t, --time <hours>', 'Time in hours', '8')
@@ -55,21 +62,33 @@ const result = timerange.reduce(processTimeRange, {
 });
 
 
+let departureTime;
+
 const processResult = (result) => {
   const duration = moment.duration(result.total, 'milliseconds').format("H[h]mm[m]");
-  const timeInMiliseconds = program.time * 60 * 60 * 1000
-  const lunchInMiliseconds = program.lunch * 60 * 60 * 1000
+  const timeInMiliseconds = program.time * 60 * 60 * 1000;
+  const lunchInMiliseconds = program.lunch * 60 * 60 * 1000;
 
-  const timeLeft = timeInMiliseconds - result.total + (result.total ? 0 : lunchInMiliseconds)
+  const timeLeft = timeInMiliseconds - result.total + (result.total ? 0 : lunchInMiliseconds);
 
-  const departureTime = moment(`${result.today} ${result.previous}`).add(timeLeft, 'ms').format("HH[:]mm")
+  departureTime = moment(`${result.today} ${result.previous}`).add(timeLeft, 'ms').format("HH[:]mm");
 
-  const timeWorkedMessage = `You have worked for ${duration}.`
-  const departureMessage =  `Clock out at ${departureTime}`
-  const lunchAddedMessage =  ` (considering ${moment.duration(lunchInMiliseconds, 'milliseconds').humanize()} of break time)`
+  const timeWorkedMessage = `You have worked for ${duration}.`;
+  const departureMessage =  `Clock out at ${departureTime}`;
+  const lunchAddedMessage =  ` (considering ${moment.duration(lunchInMiliseconds, 'milliseconds').humanize()} of break time)`;
 
   if(result.isClosed || result.total > timeInMiliseconds) return `${timeWorkedMessage}${!result.isClosed ? " Go home!" : ""}`; 
-  return `${result.total ? timeWorkedMessage+" " : ""}${departureMessage}${result.total ? "" : lunchAddedMessage}.`
+  return `${result.total ? timeWorkedMessage+" " : ""}${departureMessage}${result.total ? "" : lunchAddedMessage}`;
 }
 
 console.log(processResult(result));
+
+if(!result.isClosed) {
+  rl.question("Do you want to create a reminder on Things to check out? [y/N] ", (response) => {
+    /^(y|Y)$/.test(response) && Things.addEvent("Time to Clock Out!", result.today, departureTime);
+    rl.close();
+  });
+} else {
+  rl.close();
+}
+
