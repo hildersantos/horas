@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^3.0.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
     "open": "^6.4.0"
   }
